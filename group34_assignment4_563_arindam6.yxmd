@@ -1,0 +1,441 @@
+<?xml version="1.0"?>
+<AlteryxDocument yxmdVer="2023.1">
+  <Nodes>
+    <Node ToolID="1">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="150" y="126" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File RecordLimit="" SearchSubDirs="False" FileFormat="0" OutputFileName="">D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv</File>
+          <FormatSpecificOptions>
+            <HeaderRow>True</HeaderRow>
+            <IgnoreErrors>False</IgnoreErrors>
+            <AllowShareWrite>False</AllowShareWrite>
+            <ImportLine>1</ImportLine>
+            <FieldLen>254</FieldLen>
+            <SingleThreadRead>False</SingleThreadRead>
+            <IgnoreQuotes>DoubleQuotes</IgnoreQuotes>
+            <Delimeter>,</Delimeter>
+            <QuoteRecordBreak>False</QuoteRecordBreak>
+            <CodePage>28591</CodePage>
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>loan_application.csv</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <Dependencies>
+          <Implicit />
+        </Dependencies>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="SK_ID_CURR" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="TARGET" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="NAME_CONTRACT_TYPE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="CODE_GENDER" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="FLAG_OWN_CAR" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="FLAG_OWN_REALTY" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="CNT_CHILDREN" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="AMT_INCOME_TOTAL" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="AMT_CREDIT" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="AMT_ANNUITY" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="AMT_GOODS_PRICE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="NAME_TYPE_SUITE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="NAME_INCOME_TYPE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="NAME_EDUCATION_TYPE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="NAME_FAMILY_STATUS" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="NAME_HOUSING_TYPE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="FLAG_MOBIL" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="FLAG_EMAIL" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="OCCUPATION_TYPE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+            <Field name="CNT_FAM_MEMBERS" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\loan_application.csv" type="V_String" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+    <Node ToolID="3">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.AlteryxSelect.AlteryxSelect">
+        <Position x="294" y="126" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <OrderChanged value="False" />
+          <CommaDecimal value="False" />
+          <SelectFields>
+            <SelectField field="CNT_CHILDREN" selected="True" type="Int32" size="4" />
+            <SelectField field="AMT_INCOME_TOTAL" selected="True" type="Float" size="4" />
+            <SelectField field="AMT_CREDIT" selected="True" type="Float" size="4" />
+            <SelectField field="AMT_ANNUITY" selected="True" type="Float" size="4" />
+            <SelectField field="AMT_GOODS_PRICE" selected="True" type="Float" size="4" />
+            <SelectField field="CNT_FAM_MEMBERS" selected="True" type="Int32" size="4" />
+            <SelectField field="*Unknown" selected="True" />
+          </SelectFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSelect" />
+    </Node>
+    <Node ToolID="5">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Filter.Filter">
+        <Position x="606" y="126" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Mode>Simple</Mode>
+          <Simple>
+            <Operator>&gt;=</Operator>
+            <Field>AMT_CREDIT</Field>
+            <Operands>
+              <IgnoreTimeInDateTime>True</IgnoreTimeInDateTime>
+              <DateType>fixed</DateType>
+              <PeriodDate>2023-10-31 22:13:41</PeriodDate>
+              <PeriodType>
+              </PeriodType>
+              <PeriodCount>0</PeriodCount>
+              <Operand>300000</Operand>
+              <StartDate>2023-10-31 22:13:41</StartDate>
+              <EndDate>2023-10-31 22:13:41</EndDate>
+            </Operands>
+          </Simple>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>[AMT_CREDIT] &gt;= 300000</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFilter" />
+    </Node>
+    <Node ToolID="6">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="738" y="246" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File RecordLimit="" SearchSubDirs="False" FileFormat="0" OutputFileName="">D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv</File>
+          <FormatSpecificOptions>
+            <HeaderRow>True</HeaderRow>
+            <IgnoreErrors>False</IgnoreErrors>
+            <AllowShareWrite>False</AllowShareWrite>
+            <ImportLine>1</ImportLine>
+            <FieldLen>254</FieldLen>
+            <SingleThreadRead>False</SingleThreadRead>
+            <IgnoreQuotes>DoubleQuotes</IgnoreQuotes>
+            <Delimeter>,</Delimeter>
+            <QuoteRecordBreak>False</QuoteRecordBreak>
+            <CodePage>28591</CodePage>
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>credit_bureau.csv</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <Dependencies>
+          <Implicit />
+        </Dependencies>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="Field_1" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="SK_ID_CURR" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="SK_ID_BUREAU" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="CREDIT_ACTIVE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="DAYS_CREDIT" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="CREDIT_DAY_OVERDUE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="DAYS_CREDIT_ENDDATE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="DAYS_ENDDATE_FACT" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="AMT_CREDIT_MAX_OVERDUE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="CNT_CREDIT_PROLONG" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="AMT_CREDIT_SUM" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="AMT_CREDIT_SUM_DEBT" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="AMT_CREDIT_SUM_LIMIT" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="AMT_CREDIT_SUM_OVERDUE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="CREDIT_TYPE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="DAYS_CREDIT_UPDATE" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+            <Field name="AMT_ANNUITY" size="254" source="File: D:\Arindam\mba\563\Mod 4 Datasets\Datasets\credit_bureau.csv" type="V_String" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+    <Node ToolID="7">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Join.Join">
+        <Position x="762" y="126" />
+      </GuiSettings>
+      <Properties>
+        <Configuration joinByRecordPos="False">
+          <JoinInfo connection="Left">
+            <Field field="SK_ID_CURR" />
+          </JoinInfo>
+          <JoinInfo connection="Right">
+            <Field field="SK_ID_CURR" />
+          </JoinInfo>
+          <SelectConfiguration>
+            <Configuration outputConnection="Join">
+              <OrderChanged value="False" />
+              <CommaDecimal value="False" />
+              <SelectFields>
+                <SelectField field="Left_SK_ID_CURR" selected="True" input="Left_" />
+                <SelectField field="Left_TARGET" selected="True" input="Left_" />
+                <SelectField field="Left_NAME_CONTRACT_TYPE" selected="True" input="Left_" />
+                <SelectField field="Left_CODE_GENDER" selected="True" input="Left_" />
+                <SelectField field="Left_FLAG_OWN_CAR" selected="True" input="Left_" />
+                <SelectField field="Left_FLAG_OWN_REALTY" selected="True" input="Left_" />
+                <SelectField field="Left_CNT_CHILDREN" selected="True" input="Left_" />
+                <SelectField field="Left_AMT_INCOME_TOTAL" selected="True" input="Left_" />
+                <SelectField field="Left_AMT_CREDIT" selected="True" input="Left_" />
+                <SelectField field="Left_AMT_ANNUITY" selected="True" input="Left_" />
+                <SelectField field="Left_AMT_GOODS_PRICE" selected="True" input="Left_" />
+                <SelectField field="Left_NAME_TYPE_SUITE" selected="True" input="Left_" />
+                <SelectField field="Left_NAME_INCOME_TYPE" selected="True" input="Left_" />
+                <SelectField field="Left_NAME_EDUCATION_TYPE" selected="True" input="Left_" />
+                <SelectField field="Left_NAME_FAMILY_STATUS" selected="True" input="Left_" />
+                <SelectField field="Left_NAME_HOUSING_TYPE" selected="True" input="Left_" />
+                <SelectField field="Left_FLAG_MOBIL" selected="True" input="Left_" />
+                <SelectField field="Left_FLAG_EMAIL" selected="True" input="Left_" />
+                <SelectField field="Left_OCCUPATION_TYPE" selected="True" input="Left_" />
+                <SelectField field="Left_CNT_FAM_MEMBERS" selected="True" input="Left_" />
+                <SelectField field="Right_SK_ID_CURR" selected="False" rename="Right_SK_ID_CURR" input="Right_" />
+                <SelectField field="Right_AMT_CREDIT_SUM" selected="True" input="Right_" type="Float" size="4" />
+                <SelectField field="Right_AMT_ANNUITY" selected="False" rename="Right_AMT_ANNUITY" input="Right_" />
+                <SelectField field="*Unknown" selected="False" />
+              </SelectFields>
+            </Configuration>
+          </SelectConfiguration>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxJoin" />
+    </Node>
+    <Node ToolID="8">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.AlteryxSelect.AlteryxSelect">
+        <Position x="1014" y="126" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <OrderChanged value="False" />
+          <CommaDecimal value="False" />
+          <SelectFields>
+            <SelectField field="SK_ID_CURR" selected="True" />
+            <SelectField field="TARGET" selected="True" type="Int32" size="4" />
+            <SelectField field="AMT_INCOME_TOTAL" selected="True" />
+            <SelectField field="AMT_CREDIT_SUM" selected="True" />
+            <SelectField field="*Unknown" selected="False" />
+          </SelectFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSelect" />
+    </Node>
+    <Node ToolID="10">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Unique.Unique">
+        <Position x="1110" y="126" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <UniqueFields>
+            <Field field="SK_ID_CURR" />
+            <Field field="TARGET" />
+          </UniqueFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxUnique" />
+    </Node>
+    <Node ToolID="11">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Filter.Filter">
+        <Position x="438" y="126" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Mode>Simple</Mode>
+          <Simple>
+            <Operator>IsNotNull</Operator>
+            <Field>AMT_INCOME_TOTAL</Field>
+            <Operands>
+              <IgnoreTimeInDateTime>True</IgnoreTimeInDateTime>
+              <DateType>fixed</DateType>
+              <PeriodDate>2023-10-31 22:49:28</PeriodDate>
+              <PeriodType>
+              </PeriodType>
+              <PeriodCount>0</PeriodCount>
+              <Operand>
+              </Operand>
+              <StartDate>2023-10-31 22:49:28</StartDate>
+              <EndDate>2023-10-31 22:49:28</EndDate>
+            </Operands>
+          </Simple>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>!IsNull([AMT_INCOME_TOTAL])</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFilter" />
+    </Node>
+    <Node ToolID="12">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileOutput.DbFileOutput">
+        <Position x="1194" y="186" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <File MaxRecords="" FileFormat="0">D:\Arindam\mba\563\Mod 4 Datasets\Datasets\group34_assignment4_data.csv</File>
+          <Passwords />
+          <Disable>False</Disable>
+          <FormatSpecificOptions>
+            <LineEndStyle>CRLF</LineEndStyle>
+            <Delimeter>,</Delimeter>
+            <ForceQuotes>False</ForceQuotes>
+            <HeaderRow>True</HeaderRow>
+            <CodePage>28591</CodePage>
+            <WriteBOM>True</WriteBOM>
+          </FormatSpecificOptions>
+          <MultiFile value="False" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>group34_assignment4_data.csv</DefaultAnnotationText>
+          <Left value="True" />
+        </Annotation>
+        <Dependencies>
+          <Implicit />
+        </Dependencies>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileOutput" />
+    </Node>
+    <Node ToolID="13">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.BrowseV2.BrowseV2">
+        <Position x="1242" y="90" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <TempFile>C:\Users\arind\AppData\Local\Temp\Engine_3148_b1ca44b570a3e94281f4bf920624fee1_\Engine_3148_74a00312f3fd56439458146acedc8f11~.yxdb</TempFile>
+          <TempFileDataProfiling />
+          <Layout>
+            <ViewMode>Single</ViewMode>
+            <ViewSize value="100" />
+            <View1>
+              <DefaultTab>Profile</DefaultTab>
+              <Hints>
+                <Table />
+              </Hints>
+            </View1>
+            <View2 />
+          </Layout>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxBrowseV2" />
+    </Node>
+  </Nodes>
+  <Connections>
+    <Connection>
+      <Origin ToolID="1" Connection="Output" />
+      <Destination ToolID="3" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="3" Connection="Output" />
+      <Destination ToolID="11" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="5" Connection="True" />
+      <Destination ToolID="7" Connection="Left" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="6" Connection="Output" />
+      <Destination ToolID="7" Connection="Right" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="7" Connection="Join" />
+      <Destination ToolID="8" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="8" Connection="Output" />
+      <Destination ToolID="10" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="10" Connection="Unique" />
+      <Destination ToolID="12" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="10" Connection="Unique" />
+      <Destination ToolID="13" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="11" Connection="True" />
+      <Destination ToolID="5" Connection="Input" />
+    </Connection>
+  </Connections>
+  <Properties>
+    <Memory default="True" />
+    <GlobalRecordLimit value="0" />
+    <TempFiles default="True" />
+    <Annotation on="True" includeToolName="False" />
+    <ConvErrorLimit value="10" />
+    <ConvErrorLimit_Stop value="False" />
+    <CancelOnError value="False" />
+    <DisableBrowse value="False" />
+    <EnablePerformanceProfiling value="False" />
+    <RunWithE2 value="True" />
+    <PredictiveToolsCodePage value="1252" />
+    <DisableAllOutput value="False" />
+    <ShowAllMacroMessages value="False" />
+    <ShowConnectionStatusIsOn value="True" />
+    <ShowConnectionStatusOnlyWhenRunning value="False" />
+    <ZoomLevel value="0" />
+    <LayoutType>Horizontal</LayoutType>
+    <MetaInfo>
+      <NameIsFileName value="True" />
+      <Name>group34_assignment4_563_arindam6</Name>
+      <Description />
+      <RootToolName />
+      <ToolVersion />
+      <ToolInDb value="False" />
+      <CategoryName />
+      <SearchTags />
+      <Author />
+      <Company />
+      <Copyright />
+      <DescriptionLink actual="" displayed="" />
+      <Example>
+        <Description />
+        <File />
+      </Example>
+      <WorkflowId value="5d97b5a6-c656-4292-994d-80b1e51cdbe7" />
+      <Telemetry>
+        <PreviousWorkflowId value="906d5551-d5eb-4198-b7a6-8c85c03a1493" />
+        <OriginWorkflowId value="ad5cc8d1-83ea-43ce-952c-28daeaf15534" />
+      </Telemetry>
+      <PlatformWorkflowId value="" />
+    </MetaInfo>
+    <Events>
+      <Enabled value="True" />
+    </Events>
+  </Properties>
+</AlteryxDocument>

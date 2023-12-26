@@ -1,0 +1,240 @@
+---
+title: "Mini Assignment - Module8"
+author: "Arindam Roy"
+date: "11/30/2023"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading Library and Functions
+
+```{r}
+library(tidyverse)
+#install.packages('e1071')
+library(e1071)
+# Confusion Matrix function
+my_confusion_matrix <- function(cf_table) {
+  true_positive <- cf_table[4]
+  true_negative <- cf_table[1]
+  false_positive <- cf_table[2]
+  false_negative <- cf_table[3]
+  accuracy <- (true_positive + true_negative) / (true_positive + true_negative + false_positive + false_negative)
+  sensitivity_recall <- true_positive / (true_positive + false_negative) 
+  specificity_selectivity <- true_negative / (true_negative + false_positive)
+  precision <- true_positive / (true_positive + false_positive) 
+  neg_pred_value <- true_negative/(true_negative + false_negative)
+  print(cf_table)
+  my_list <- list(sprintf("%1.0f = True Positive (TP), Hit", true_positive),
+                  sprintf("%1.0f = True Negative (TN), Rejection", true_negative),
+                  sprintf("%1.0f = False Positive (FP), Type 1 Error", false_positive),
+                  sprintf("%1.0f = False Negative (FN), Type 2 Error", false_negative),
+                  sprintf("%1.4f = Accuracy (TP+TN/(TP+TN+FP+FN))", accuracy), 
+                  sprintf("%1.4f = Sensitivity, Recall, Hit Rate, True Positive Rate (How many positives did the model get right? TP/(TP+FN))", sensitivity_recall),
+                  sprintf("%1.4f = Specificity, Selectivity, True Negative Rate (How many negatives did the model get right? TN/(TN+FP))", specificity_selectivity),                   
+                  sprintf("%1.4f = Precision, Positive Predictive Value (How good are the model's positive predictions? TP/(TP+FP))", precision),
+                  sprintf("%1.4f = Negative Predictive Value (How good are the model's negative predictions? TN/(TN+FN)", neg_pred_value)
+  )
+  return(my_list)
+}
+```
+
+
+## Customer Churn Analysis
+
+# Load the data from Kaggle dataset
+
+```{r}
+df <- read_csv("Churn_Modelling.csv")
+```
+
+# Summary
+
+```{r}
+str(df)
+```
+
+# Head rows
+
+```{r}
+head(df)
+```
+
+# Summary
+
+```{r}
+summary(df)
+```
+
+## Data cleaning
+
+```{r}
+ColumnsNotUsed <- df %>% 
+  select(RowNumber, CustomerId, Surname, HasCrCard, Tenure, Balance, EstimatedSalary)
+
+custchurn <- df %>% select(-RowNumber, -CustomerId, -Surname, -HasCrCard, -Tenure, -Balance, -EstimatedSalary)
+head(custchurn)
+```
+
+We found the Tenure and HasCrCard are less significant to the data model so ignoring these independednt variables
+
+
+## Check if NAs are there in the data
+
+```{r}
+apply(custchurn, 2, function(x) any(is.na(x)))
+```
+
+# Looking at the Bar chart to understand the customer chrun data available in dataset
+
+```{r}
+
+custchurn <- custchurn %>% mutate(Geography = as.factor(Geography),
+           Gender = as.factor(Gender),
+           NumOfProducts = as.factor(NumOfProducts),
+           IsActiveMember = as.factor(IsActiveMember),
+           Exited = as.factor(Exited))
+
+ggplot(custchurn, aes(Exited, fill = Exited)) +
+    geom_bar() +
+    theme(legend.position = 'none')
+```
+
+```{r}
+table(custchurn$Exited)
+```
+
+# Numerical Data Distribution in dataset
+
+```{r}
+custchurn %>%
+    keep(is.numeric) %>%
+    gather() %>%
+    ggplot() +
+    geom_histogram(mapping = aes(x=value,fill=key), color="black") +
+    facet_wrap(~ key, scales = "free") +
+    theme_minimal() +
+    theme(legend.position = 'none')
+```
+
+
+# Correlation Matrix
+
+```{r}
+#install.packages("corrplot")
+library(corrplot)
+numericVarName <- names(which(sapply(custchurn, is.numeric)))
+corr <- cor(df[,numericVarName], use = 'pairwise.complete.obs')
+corrplot(corr, method = "square")
+```
+
+# Categorical data distribution
+
+```{r}
+
+summary(custchurn)
+custchurn %>%
+    select(-Exited) %>% 
+    keep(is.factor) %>%
+    gather() %>%
+    group_by(key, value) %>% 
+    summarize(n = n()) %>% 
+    ggplot() +
+    geom_bar(mapping=aes(x = value, y = n, fill=key), color="black", stat='identity') + 
+    coord_flip() +
+    facet_wrap(~ key, scales = "free") +
+    theme_minimal() +
+    theme(legend.position = 'none')
+
+```
+
+
+
+```{r}
+head(custchurn)
+```
+
+# Distributing Train data and Test Data (75:25 ratio)
+
+```{r}
+library(caret)
+set.seed(42) 
+partition <- caret::createDataPartition(y=custchurn$Exited, p=.75, list=FALSE) #gives matrix of row numbers
+data_train <- custchurn[partition, ] #keeps the rows indicated in `partition` and all columns from `logit1`
+data_test <- custchurn[-partition, ] #keeps the rows not indicated in `partition` and all columns from `logit1`
+```
+
+# Train the model using Logistic Regression algorithm
+
+```{r}
+model_train <- glm(Exited ~ ., family=binomial, data=data_train)
+summary(model_train)
+```
+
+# Predict the Test Data
+
+```{r}
+predict_test <- predict(model_train, newdata=data_test, type='response')
+```
+
+
+# Show the confusion Matrix
+
+```{r}
+table8 <- table(predict_test>.5, data_test$Exited) #prediction on left and truth on top
+my_confusion_matrix(table8)
+```
+
+
+# Reconciliation of the Test results with Actual dataset
+
+```{r}
+# Put the prediction back into the test data
+data_test$prediction <- predict_test
+
+# Create a variable that shows if the prediction was correct 
+# (We have to do the classification--in `round(prediction)`--since logistic regression gives us a probability)
+data_test <- data_test %>% 
+  mutate(correct_prediction = if_else(round(prediction) == Exited, 'correct', 'WRONG!'))
+
+# Add back the original data
+temp1 <- ColumnsNotUsed[-partition, ]
+full_test <- bind_cols(temp1, data_test)
+
+# For viewing in class
+#full_test <- full_test %>% 
+#  select(store, week, high_med_gp, prediction, correct_prediction, 
+#         size, region, promo_units_per, salty_units_per)
+slice_sample(full_test, n=10)
+```
+## Summary
+
+The dataset is collected from the famous Kaggle Website and the link of the dataset is given below.
+
+https://www.kaggle.com/code/kmalit/bank-customer-churn-prediction
+
+It is a Customer dataset of a bank and has a total 14 columns. The data has 13 independent and a target variable called "Exited". Exited column is customer churn and the objective is to understand the pattern in the dataset and create a statistical model which should perform the following:
+
+1) Classify if a customer is going to churn or not
+2) Preferably and based on model performance, choose a model that will attach a probability to the churn to make it easier for customer service to prevent churn.
+
+During the analysis phase of the data, I couldn't find out if any cleanup of the data was required. The `str` function of the data shows that the columns are appropriate except "Geography", "Gender", "IsActiveMember '' and "Exited" columns, there columns were converted to Factor data type.
+
+2037 customers were churn out of 10,000 customers. It is shown as data visualization as Bar chart and Table structure.
+
+Data with NA weren't found in the dataset and was checked before the EDA process.
+
+Numerical data distribution were performed as a part of EDA with Correlation matrix and histogram chart.
+
+Categorical data distribution is also checked using a horizontal bar chart.
+
+The columns which won't be significant like "RowNumber", "CustomerId" and "Surname" were ignored as these attributes won't contribute to building the model.
+
+Geography as France is the intercept. HasCrCard, Tenure, Balance, EstimatedSalary are found statistically insignificant and later not used in the model.
+The accuracy of the model is 84.15%, however the sensitivity was not quite well so it has poor performance to find out the true positive response. As a matter of fact, negative predictive value is quite okay (~86%).

@@ -1,0 +1,190 @@
+---
+Course: MBA563
+Term: Fall 2023
+Module: 6
+Author: Arindam Roy(arindam6)
+date: "`r as.character(Sys.time())`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Packages and functions
+```{r}
+# RStudio Options
+options(scipen = 1000) #Prevent display in scientific notation
+# Run this reusable confusion matrix function (https://en.wikipedia.org/wiki/Confusion_matrix)
+my_confusion_matrix <- function(cf_table) {
+  true_positive <- cf_table[4]
+  true_negative <- cf_table[1]
+  false_positive <- cf_table[2]
+  false_negative <- cf_table[3]
+  accuracy <- (true_positive + true_negative) / (true_positive + true_negative + false_positive + false_negative)
+  sensitivity_recall <- true_positive / (true_positive + false_negative) 
+  specificity_selectivity <- true_negative / (true_negative + false_positive)
+  precision <- true_positive / (true_positive + false_positive) 
+  neg_pred_value <- true_negative/(true_negative + false_negative)
+  print(cf_table)
+  my_list <- list(sprintf("%1.0f = True Positive (TP), Hit", true_positive),
+                  sprintf("%1.0f = True Negative (TN), Rejection", true_negative),
+                  sprintf("%1.0f = False Positive (FP), Type 1 Error", false_positive),
+                  sprintf("%1.0f = False Negative (FN), Type 2 Error", false_negative),
+                  sprintf("%1.4f = Accuracy (TP+TN/(TP+TN+FP+FN))", accuracy), 
+                  sprintf("%1.4f = Sensitivity, Recall, Hit Rate, True Positive Rate (How many positives did the model get right? TP/(TP+FN))", sensitivity_recall),
+                  sprintf("%1.4f = Specificity, Selectivity, True Negative Rate (How many negatives did the model get right? TN/(TN+FP))", specificity_selectivity),
+                  sprintf("%1.4f = Precision, Positive Predictive Value (How good are the model's positive predictions? TP/(TP+FP))", precision),
+                  sprintf("%1.4f = Negative Predictive Value (How good are the model's negative predictions? TN/(TN+FN)", neg_pred_value)
+  )
+  return(my_list)
+}
+```
+
+## Load libraries
+```{r}
+library(tidyverse)
+library(caret)
+```
+
+## Read data file
+```{r}
+df <- read_rds(r"(mod6HE_logit.rds)")
+```
+
+## Data structure
+```{r}
+str(df)
+```
+
+## Summary
+```{r}
+summary(df)
+```
+# Get the idea of data set
+```{r}
+head(df)
+```
+
+## Prepare the data to choose appropriate columns for training
+```{r}
+# Not for the model (for use later)
+ColumnsNotUsedM6 <- df %>% 
+  select(high_med_rev, high_med_gp, high_med_gpm, store, week)
+
+# For use in the model
+logitM6 <- df %>% 
+  select(high_med_units, size, region, promo_units_per, 
+         altbev_units_per, confect_units_per, salty_units_per,
+         velocityA_units_per, velocityB_units_per, velocityC_units_per, velocityD_units_per, velocityNEW_units_per)
+```
+
+## Partition the data into train and test set
+```{r}
+set.seed(42) 
+partition_m6 <- caret::createDataPartition(y=logitM6$high_med_units, p=.75, list=FALSE) #gives matrix of row numbers
+data_train_m6 <- logitM6[partition_m6, ] #keeps the rows indicated in `partition` and all columns from `logitM6`
+data_test_m6 <- logitM6[-partition_m6, ] #keeps the rows not indicated in `partition` and all columns fro m `logitM6`
+```
+
+## Train the model and summary the model
+```{r}
+model_train_m6 <- glm(high_med_units ~ ., family=binomial, data=data_train_m6)
+summary(model_train_m6)
+```
+
+# Questions and Answers -1
+1.a What feature/variable has the largest positive coefficient and is statistically significant in the trained model summary?
+
+Ans: Salty units(salty_units_per) has largest positive coefficient and p-value is very less, so statistically very significant in this model.
+
+1.b Does selling a higher proportion of alternative beverages increase, decrease, or neither increase nor decrease the chance of
+having above median units sold? How do you know this?
+
+Ans: It will increase the chance of selling above the median units as the coefficient is positive and the variable is statistically significant (p-value is very less).
+
+1.c Does selling a higher proportion of velocity B units increase, decrease, or neither increase nor decrease the chance of having above median units sold? How do you know this?
+
+Ans: Although velocity B units has positive coefficient in model, but it will neither increase nor decrease the chance of having above median units sold as the independent variable is not statistically significant.
+
+2. In the model training step, which data—training or testing—do we use and why (that is, explain why we split the data into training and testing subsets)?
+
+Ans: We have used R Caret Library and Seed size as 42 to partition the data. Initially, we had selected appropriate columns or independent variables to train the the dataset and split the data before training by 75:25 ratio.
+
+3. The feature ‘region’ has changed in the summary of the trained model. Further, only three regions show up in the summary of the model. The reasoning for this is that the ‘glm()’ function automatically recognizes that ‘region’ is a categorical variable (specifically a factor in R). This is discussed in our Coursera content. Thus, the ‘glm()’ function has created “dummy variables” for the levels of ‘region’. Which level of the variable is not present here but rather accounted for in the intercept term?
+
+Ans: ONTARIO region is not present in the data, rather accounted for in the intercept term.
+
+
+
+# Predict the response variable on the test data using the training data
+```{r}
+predict_test_m6 <- predict(model_train_m6, newdata=data_test_m6, type='response')
+```
+
+# Create the Confusion Matrix
+```{r}
+table2_m6 <- table(predict_test_m6 >.5, data_test_m6$high_med_units) #prediction on left and truth on top
+my_confusion_matrix(table2_m6)
+```
+
+# Questions and Answers -2
+1.d Examine the accuracy of the predictions on the test data by answering whether there are more true positives or more true negatives.
+
+Ans: There are more true negatives (TN) by prediction on test data than True Positives (TP). 
+
+4. Interpret the confusion matrix using the test/holdout data. Specifically, which of the four measures—Sensitivity, Specificity, Precision, or Negative Predictive Value—has the highest value? Write a sentence that translates this value into words. That is, say something that starts like this: “this means this model is good at predicting...”.
+
+Ans: Negative Predictive Value has highest value as 0.7708. It means that how good this model is predicting true negative values from the dataset.
+
+5. Interpret the confusion matrix. Specifically, which of the four measures—Sensitivity, Specificity, Precision, or Negative Predictive Value—has the lowest value? Write a sentence that translates this value into words. That is say something that starts like this: “this means this model is not as good at predicting…”.
+
+Ans: Precision has the lowest value among these measures as 0.75. It means that this model is not good as predicting true positive values from the dataset. 
+
+6. Interpret the confusion matrix. In NANSE’s business setting, which of these measures does NANSE care about the most— Sensitivity, Specificity, Precision, Negative Predictive Value—or something else?  Defend your answer in two or three sentences. There is no correct answer here, but you must successfully defend your answer to get credit.
+
+Ans: As per business problem, Nanse wants to predict the store and the week to understand the pattern where traffics will be higher, and accordingly they might take some action. Hence, Sensitivity or recall should be considered as higher weight to NANSE business as it will help them to understand the true positive rate i.e. how many positive values the model would predict right.
+
+## Helping business to find out store and week
+```{r}
+# Put the prediction back into the test data
+data_test_m6$prediction <- predict_test_m6
+
+# Create a variable that shows if the prediction was correct 
+# (We have to do the classification--in `round(prediction)`--since logistic regression gives us a probability)
+data_test_m6 <- data_test_m6 %>% 
+  mutate(correct_prediction = if_else(round(prediction) == high_med_units, 'correct', 'WRONG!'))
+
+# Add back the original data
+temp1 <- ColumnsNotUsedM6[-partition_m6, ]
+full_test_m6 <- bind_cols(temp1, data_test_m6)
+```
+
+# Select the required columns to make inference
+```{r}
+# For viewing in class
+full_test_m6 <- full_test_m6 %>% 
+  select(store, week, high_med_units, prediction, correct_prediction)
+slice_sample(full_test_m6, n=10)
+```
+
+```{r}
+full_test_m6_wrng <- full_test_m6 %>% filter(correct_prediction == "WRONG!") 
+full_test_m6_ordered <- full_test_m6_wrng[order(full_test_m6_wrng$store, decreasing = FALSE), ]
+head(full_test_m6_ordered)
+```
+
+# Question and Answers -3
+1.e If stores are sorted by the ‘store’ feature in an ascending manner (lowest number first), which is the first store in the ‘full_test’ dataset that has a “WRONG!” prediction?
+
+Ans: Store#186 has wrong prediction coming as first store.
+
+# To find out correct prediction of the higher traffic in store and week for actionable insights by Business
+```{r}
+predict_store_week_results <- full_test_m6 %>% filter(correct_prediction == "correct" & prediction > .5)
+slice_sample(predict_store_week_results, n=10)
+```
+

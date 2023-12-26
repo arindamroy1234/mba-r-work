@@ -1,0 +1,475 @@
+************************************************************************
+# Title: In-Class Notebook Mod8HE K-Means DBSCAN
+Course: MBA563
+Term: Fall 2023
+Mooc or HE?: HE
+Module: 08
+Author: Kim Mendoza and Jessen Hobson
+************************************************************************
+
+**********K-MEANS ***************************
+
+__1.0 - Load and prep the data__
+# Install packages and read in data
+```{r}
+#install.packages('tidyverse') #only install once
+library(tidyverse)
+#install.packages('factoextra') #only install once
+library(factoextra)
+
+# read in data (change to your path)
+clustering_input1 <- read_rds(r"(C:\Users\kimendoz\Documents\MBA 563\Module 8 Live Session\clustering_input1.rds)")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# remove store from the data for use later
+```{r}
+clustering_input2 <- clustering_input1 %>% 
+        select(-store)
+
+str(clustering_input2)
+summary(clustering_input2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Z-score standardization
+```{r}
+clustering_input2 <- as.data.frame(scale(clustering_input2))
+```
+
+__QUESTION:__ All variables are numerical and scaled. Why?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+__2.0 - picking k__
+# Find a suitable k using two different methods
+```{r}
+# Within-cluster sum of square method
+set.seed(42)
+factoextra::fviz_nbclust(clustering_input2, kmeans, method = "wss")
+```
+
+```{r}
+# Silhouette approach
+set.seed(42)
+factoextra::fviz_nbclust(clustering_input2, kmeans, method = "silhouette")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+__3.0 - Run and evaluate k-means__
+# Run the model
+```{r}
+set.seed(42)
+clusters <- kmeans(clustering_input2, centers=4, iter.max=10, nstart=10)
+```
+Arguments:
+* `centers`: number of centroids (k random (distinct) rows are chosen as the initial centers)
+* `iter.max`: the maximum number of iterations allowed
+* `nstart`: how many random start configurations are chosen (for example, nstart=10 will generate 10 initial random centroids and choose the best one for the algorithm)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Check the size of the k clusters
+(Ideally, clusters are of similar size)
+```{r}
+clusters$size
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Visualize the clustering
+(Uses principal components to collapse the dimensions of the data down to two dimensions)
+```{r}
+fviz_cluster(clusters, clustering_input2,  geom = "point", show.clust.cent = TRUE, palette = "jco", ggtheme = theme_classic())
+```
+__QUESTION:__ Is this really 4 clusters or 2?
+__QUESTION:__ Are there outliers that should not be captured?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# A matrix indicating the mean values for each feature and cluster combination
+```{r}
+clusters$centers
+```
+__QUESTION:__ What should we name each cluster?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+__4.0 - put clusters back into the dataset and investigate individual stores__
+# Add clusters to the original, un-standardized dataset and add labels
+```{r}
+clustering_input1$cluster <- clusters$cluster
+
+clustering_input1 <- clustering_input1 %>% 
+        mutate(cluster_labels = case_when(
+                cluster==1 ~ 'Cluster 1', 
+                cluster==2 ~ 'Cluster 2',
+                cluster==3 ~ 'Cluster 3',
+                cluster==4 ~ 'Cluster 4'))
+
+slice_sample(clustering_input1, n=10)
+```
+__Question__: What can NANSE do with this data?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**********DBSCAN**************************************************
+__5.0__ 
+# Run this code before you start
+```{r}
+#install.packages('dbscan') #only install once
+library(dbscan)
+
+# read in data (change to your path)
+clustering_input1 <- read_rds(r"(C:\Users\kimendoz\Documents\MBA 563\Module 8 Live Session\clustering_input1.rds)")
+
+clustering_input2 <- clustering_input1 %>% 
+        select(-store)
+```
+
+# Standardize the data using z-score standardization. 
+The features need to be continuous and standardized. Why?
+```{r}
+clustering_input2 <- as.data.frame(scale(clustering_input2))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Run the DBSCAN algorithm
+```{r}
+set.seed(42)
+clusters_db <- dbscan::dbscan(clustering_input2, eps = 3, minPts = 4)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Use the `table()` function to print the size of the clusters.
+```{r}
+table(clusters_db$cluster)
+```
+__QUESTIONS__: 
+1. How many clusters are present? 
+2. What does the “0 cluster" represent? 
+3. Generally, we prefer clusters to be relatively equal in size. How equal are the clusters here? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+__6.0 - Visualize the clusters__
+# Visualize the clusters
+```{r}
+fviz_cluster(clusters_db, clustering_input2,  geom = "point", show.clust.cent = FALSE, palette = "jco", ggtheme = theme_classic())
+```

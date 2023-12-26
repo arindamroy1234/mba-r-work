@@ -1,0 +1,32 @@
+---
+title: "Business Analytics with R - Team Project"
+output: html_document
+date: "2023-09-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+df <- read.csv("ities.csv", stringsAsFactors = F)
+head(df)
+```
+```{r}
+df1 <- read.csv("max_temp.csv", stringsAsFactors = F)
+head(df1)
+```
+```{r}
+#install.packages("dplyr")
+library(dplyr)
+```
+
+
+```{r}
+df_daily <- df %>% 
+  group_by(Date) %>% 
+  summarize(Quantity = mean(Quantity, na.rm = T), TotalDue = mean(TotalDue, na.rm = T)) %>% 
+  arrange(as.Date(Date)) %>%
+  ungroup()
+```
+

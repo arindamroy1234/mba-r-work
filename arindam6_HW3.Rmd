@@ -1,0 +1,95 @@
+---
+title: "HW3-Business Analytics with R"
+author: "Arindam Roy"
+date: "2023-08-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#1 Read in the ities.csv datafile as a dataframe object, df.
+
+```{r}
+df <- read.csv("ities.csv", stringsAsFactors = F)
+```
+
+#2 Display the number of rows and columns in the dataset using an appropriate R function.
+
+```{r}
+countRows <- nrow(df)
+countCol <- ncol(df)
+countRows
+countCol
+```
+
+The dataset has 438151 number of records and 13 columns.
+
+
+#3 Display the structure of the dataframe, df
+```{r}
+str(df)
+```
+The above dataset is a record set of grocery store with each transaction as a single record on the particular date. The above record set has 10 character data type, 2 num data type and one integer quantity data type.
+
+#4 Display a summary of the columns in df
+```{r}
+summary(df)
+```
+The lineItem and Department columns in the above summary of the dataset are not useful as it were in character datatype.This datatype should be changed to Factor datatype or calculate the descriptive statistics and plot the figure as well. The price, quantity and Totaldue are numeric value, hence descriptive statistical values are showing up.
+
+#5 Convert the values in Department and LineItem columns to lower case and save them as new columns, Department_lower and LineItem_lower. 
+
+```{r}
+#install.packages("forcats")
+#load the forcats library
+library(forcats)
+```
+
+
+```{r}
+df$Department_lower <- tolower(df$Department)
+df$LineItem_lower <- tolower(df$LineItem)
+```
+
+#5 Display the first five rows of only those four columns, Department, Department_lower, LineItem, and LineItem_lower, to verify that the case conversion worked. 
+
+```{r}
+df[1:5, c("Department", "Department_lower", "LineItem", "LineItem_lower")]
+```
+
+#6 Use the “plot” function on Department_lower, and then run that code chunk. You will get an error. Below the output, describe the reason for the error. Then make sure and comment out this code chunk by placing a hashtag/pound sign on the far left of the line of code.
+```{r}
+#plot(df$Department_lower)
+```
+The reason of the above error is Department_lower variable is of Character datatype which can't be used to use plot function or calculate any statistical data. 
+
+#7 Convert the datatype of Department_lower to a factor type. Do not create a new column; just convert it in place.Display the structure of the dataframe, df, to verify that the Department_lower column is a factor data type.
+
+```{r}
+df$Department_lower <- fct_infreq(df$Department_lower)
+str(df)
+```
+
+
+
+```{r}
+nlevels(df$Department_lower)
+```
+There are 9 levels in Department_lower column.
+
+#8 Use the “plot” function on the Department_lower column to display a plot of that column from most frequent on the left to least frequent on the right
+
+```{r}
+plot(df$Department_lower)
+```
+
+
+The above diagram shows that entrees, kabob and sides are occurred most frequently, whereas catering and swag are least occurred data.
+
+#8.1 It may be hard for you to read the names of all of the departments from the plot. You may have to add additional code to adjust the plot or to print out additional summary information so that you can identify the Departments that appear most/least frequently. 
+```{r}
+summary(df$Department_lower)
+```
+

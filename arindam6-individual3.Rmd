@@ -1,0 +1,168 @@
+---
+title: "MBA 563 Template For Assignment 3"
+author: "Arindam Roy(arindam6)"
+date: "`r as.character(Sys.time())`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+# 1 - Load data 
+
+```{r}
+df <- read.csv("store_3HE.csv", stringsAsFactors = F)
+```
+
+# 2 - Familiarization with the data 
+
+```{r}
+summary(df)
+```
+```{r}
+n_distinct(df)
+```
+
+
+```{r}
+str(df)
+```
+```{r}
+head(df)
+```
+There are 20 columns and 771 records in the dataset.
+
+# 3 - Convert __revenue__ to numeric 
+```{r}
+df$revenue <- as.numeric(df$revenue)
+str(df)
+```
+```{r}
+summary(df$revenue)
+```
+```{r}
+colSums(is.na(df))
+```
+```{r}
+which(is.na(df), arr.ind=TRUE)
+which(is.na(df$size), arr.ind=TRUE) 
+which(is.na(df$revenue), arr.ind=TRUE)
+```
+```{r}
+df_na_size <- subset(df, is.na(df$size))
+df_na_revenue <- subset(df, is.na(df$revenue))
+df_na_size
+df_na_revenue
+```
+
+
+# 4 - Delete rows with missing values
+```{r}
+df <- df %>% drop_na()
+```
+
+```{r}
+n_distinct(df)
+```
+```{r}
+mean(df$revenue)
+```
+
+
+Exploratory Data Analysis Tasks. 
+
+
+# 5 - df_low and df_high
+
+
+```{r}
+
+df_high <- df[df$revenue >= ave(df$revenue) , ]
+#n_distinct(df_high)
+mean(df_high$revenue)
+mean(df_high$size)
+```
+```{r}
+df_low <- df[df$revenue < ave(df$revenue) , ]
+#n_distinct(df_low)
+mean(df_low$revenue)
+mean(df_low$size)
+```
+```{r}
+
+ggplot(df_low, aes(x = size, y = revenue)) +
+    geom_point()
+```
+```{r}
+ggplot(df_high, aes(x = size, y = revenue)) +
+    geom_point()
+
+```
+
+
+
+
+When the revenue is less than the average revenue in the dataset there is a strong correlation between revenue and size, i.e. revenue is increased when the size is also increasing, but if it is other way, the relationship is not so strong.
+
+# 6 - Correlation betweeen __revenue__ and __size__  
+
+```{r}
+cor(df$revenue, df$size)
+```
+
+
+```{r}
+ggplot(df, aes(x = size, y = revenue)) +
+    geom_point()
+```
+
+
+
+# 7 - Boxplots of __revenue__ for each region 
+```{r}
+ggplot(df) +
+  geom_boxplot(aes(x = region, y = revenue)) 
+```
+
+
+
+It is observed from the chart that WEST region has highest median sales and there are few outliers are also present in the dataset. Ontario region has minimum 25% and 75% quartile range of revenue among all the regions.
+
+# 8 - Bar chart of __gross_profit__ for each province  
+```{r}
+df %>% 
+  ggplot(aes(x = province)) +
+  geom_bar() +
+  labs(y = "gross_profit", x = "province")
+```
+
+
+
+It is observed from the chart that ON province has highest gross profit collected and NB and PE are lowest gross profit province.
+
+# 9 - Correlation matrix of average store sales for product categories  
+```{r}
+df_corr <- df %>%
+  select(promo_units, energy_units, regularBars_units, gum_units, bagpegCandy_units, isotonics_units, singleServePotato_units, takeHomePotato_units, kingBars_units, flatWater_units, psd591Ml_units) %>%
+  cor()
+df_corr
+```
+```{r}
+sort(df_corr[df_corr!=max(df_corr)])
+```
+
+
+1) promo_units and isotonics_units are sold together most.
+
+2) gum_units and psd591Ml_units are sold together least.

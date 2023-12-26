@@ -1,0 +1,320 @@
+---
+title: "HE5 Live Session Handout"
+author: "Ron Guymon"
+date: "11/8/2023"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T # Change this to False if you don't want to include the code
+                      , message = F
+                      , warning = F)
+```
+## Introduction
+
+In this handout we will use the data analytic workflow/FACT framework to make predicitons about future sales. Our focus will be on data modeling. The steps and the details that we will focus on are listed next.
+
+## Steps
+
+1. __F__ rame a question: What are future sales predicted to be for a campaign?  
+2. __A__ ssemble data: The data has already been gathered and cleaned.  
+3. __C__ alculate results 
+  * First using EDA: We have already removed missing values, and cleaned it up quite a bit; however, we will use EDA to understand univariate and bivariate relationships to reinforce the regression calculations.  
+  * Second using regression: We will illustrate both backward elminiation and forward selection for creating models that we can use for prediction.  
+4. __T__ ell others about the results: We will use the models to make predictions, and then plot the predictions on plot to help us identify the optimal allocation of sales dollars.  
+
+
+## Load libraries and data
+
+Let's first load the packages that we will use, read in the data, and look at its structure.
+
+```{r}
+library(tidyverse) # For lots of tidyverse packages and functions
+library(magrittr) # For pipe symbol
+library(GGally) # For nice looking pairplots
+library(plotly) # For interactive plots like in Alteryx
+
+# Read in data
+df <- readRDS('adSpend.rds') # Fictitious data for illustrating regression concepts
+str(df) # Structure
+```
+
+The adspend data is fictitious data that we will use to illustrate regression concepts. It consists of 426 observations and 5 variables. Here is a brief description about each column:
+
+1. __sales__: The dollar value of sales for the duration of the associated ad campaigns.
+2. __adSpendFacebook__: The dollar value spent on advertising on Facebook.
+3. __adSpendInstagram__: The dollar value spend on advertising on Instagram.
+4. __campaign__: The name of the advertising campaign. There are three different campaigns in this dataset.
+5. __store__: The nominal name of the store.
+
+### Check for missing values
+
+Missing values:
+
+```{r}
+colSums(is.na(df))
+```
+
+There are no missing values.
+
+### Cardinality of Campaign and Store  
+
+Let's get an idea of how many unique values there are for each campaign and store.
+
+```{r}
+summary(factor(df$campaign))
+summary(factor(df$store))
+table(df$campaign, df$store)
+```
+
+* There is an equal number of observations for each campaign: 142.  
+* There is an uneven number of observations for each store.
+  * Store E has the most observations: 105
+  * Store A has the fewest observations: 23
+* The table function breaks this down for each campaign/store combination.
+
+## EDA (Overall)
+
+Let's look at a visual representation of the data using a pairplot.
+
+The code cell below creates a really useful set of plots for a dataset that is as small as this. We are only using the first four columns of data: __sales, adSPendFacebook, adSpendInstagram, campaign__. The __store__ column will not be included in this plot, but we could re-run it by setting color equal to store.
+
+```{r}
+# The ggpairs function is from the GGally package. It creates a rich pairplot
+ggpairs(df
+        , columns = 1:4 # Only include the first four columns,and leave out the last column, store.
+        , aes(color = campaign # Let's look for any difference among campaign. 
+              , alpha = .4 # Makes the colors partially transparent
+              )
+        )
+```
+
+### Organization of the pairplot
+* The diagonal shows the univariate distribution for each variable.
+  * For a numeric variable, a density plot is used, separated by campaign. 
+  * For a categorical variable, a barplot is used to show the count of observations.
+* The lower triangle shows bivariate relationships.
+  * For two numeric variables, a scatter plot is used.
+  * For a numeric and a categorical variable, a faceted histogram is used.
+* The upper triangle quantifies bivariate relationships.
+  * For two numeric variables, a correlation is used.
+  * For a numeric and a categorical variable, a faceted boxplot is used.
+  
+### Takeaways from the pairplot
+1. Sales for the campaign 3 are generally lower, as indicated in the distribution plots and box and whisker plots for sales in the first row of the pairplot.
+2. Sales has a strong correlation with adSpendFacebook overall (`r round(cor(df %>% select(sales, adSpendFacebook))[2], 2)`). However, sales has a very high correlation with adSpendFacebook for campaign 1 (`r round(cor(df %>% filter(campaign == 'C1') %>% select(sales, adSpendFacebook))[2], 2)`), and a weak correlation with campaign 2 (`r round(cor(df %>% filter(campaign == 'C2') %>% select(sales, adSpendFacebook))[2], 2)`). You can kind of see these correlations in the scatter plot, but with so many colors, it's hard to verify.
+3. Sales has a moderate correlation with adSpendInstagram overall (`r round(cor(df %>% select(sales, adSpendInstagram))[2], 2)`). Sales has a strong correlation with adSpendInstagram for campaign 2 (`r round(cor(df %>% filter(campaign == 'C2') %>% select(sales, adSpendInstagram))[2], 2)`) and campaign 3 (`r round(cor(df %>% filter(campaign == 'C3') %>% select(sales, adSpendInstagram))[2], 2)`), and a weak correlation with campaign 1 (`r round(cor(df %>% filter(campaign == 'C1') %>% select(sales, adSpendInstagram))[2], 2)`). You can kind of see these correlations in the scatter plot, but with so many data points, it's hard to verify.
+
+## Campaign 1 (Backward Elimination)  
+
+We will now illustrate steps 3-4 using the campaign 1.
+
+3. Calculate results 
+  * First using EDA: We will use scatter plots to look at bivariate relationships.  
+  * Second using regression: We will use a backward elimination (top down) approach to create a model.
+4. Tell others about the results: We will illustrate how to predict future sales using the prediction data, and then creating a plot of it.
+
+### Calculate using EDA
+
+Let's first create a scatter plot between adspend and sales for the first campaign.
+```{r}
+# Create a dataset only for the C1 campaign data
+c1 <- df %>% filter(campaign == 'C1')
+
+# Reshape the data from wide to long and then plot it
+c1 %>%
+  pivot_longer(cols = c(adSpendFacebook, adSpendInstagram)
+               , names_to = 'ad', values_to = 'spend') %>%
+  ggplot(aes(x = spend, y = sales, color = ad)) +
+  geom_point()
+```
+
+This highlights the strong positive correlation between sales and adSpendFacebook for campaign 1. 
+
+### Calculate using Regression
+
+Let's use regression and use a backward elimination approach to creating a model that we can use for predicting sales from campaign 1.
+
+Backward elimination is when you add in all the variables and then remove those that are insignificant.
+
+#### Model 1
+
+```{r}
+lmc1_1 <- lm('sales ~ adSpendFacebook + adSpendInstagram + store', data = c1)
+summary(lmc1_1)
+```
+
+__Observations__  
+
+* Notice that R automatically detected that store is a categorical variable and so it created dummy variables to deal with that. Nice!
+* The adjusted R-squared is high. This model would be good for making predictions.
+* Should we remove any variables?  
+  * The p-value on adSpendInstagram is insignificant. Thus, the coefficient is not reliably different from 0, and we should remove it from the model.
+  * The p-values on the store coefficients are all insignificant. Thus, they have the same intercept, and should be removed from the model.
+  * The final model that we present would be the one without the adSpendInstagram and store variables. 
+
+#### Insignificance  
+
+Let's represent the insignificance of the adSpendInstagram and store variables.
+
+```{r}
+# Reshape the data from wide to long and then plot it
+c1 %>%
+  pivot_longer(cols = c(adSpendFacebook, adSpendInstagram)
+               , names_to = 'Platform', values_to = 'Spend') %>%
+  ggplot(aes(x = Spend, y = sales, color = Platform)) +
+  geom_point() +
+  stat_smooth(method = 'lm', se = F) +
+  facet_wrap(vars(store), ncol = 2)
+```
+
+__Observations__  
+* The adSpendInstagram line is pretty flat in most of the plots. This means that it stays the same regardless of how much is spent, and is therefore insignificant.  
+* The intercepts for adSpendFacebook are all about the same. There is a little variation in intercepts for the adSpendInstagram lines. This is why the store variable is insignificant.
+
+### Back to model creation
+
+#### Model 2
+
+Let's create a simpler regression model by only including adSpendFacebook as a predictor variable.
+
+```{r}
+lmc1_2 <- lm('sales ~ adSpendFacebook', data = c1)
+summary(lmc1_2)
+```
+
+__Observations__ 
+
+* Notice that the adjusted R-squared is still very high, so this model could be reliably used for making predictions of what sales will be for campaign 1 based on how much you plan on spending for Facebook. This is also simpler.
+* Specifically, we can see that each dollar spent on Facebook ads increases sales by about $`r round(coef(summary(lmc1_2))[2][1], 2)`.
+
+### Predictions  
+
+Let's make predictions with this model using the prediction data, and then visualize them in a 3d scatter plot using the plotly package.
+```{r}
+# Read in the prediction data
+pd <- readRDS('predictionData.rds') # Explore it by clicking on the pd dataframe in the Environment pane.
+
+# Create a new column of predicted sales using the lmsa2 model
+pd$sales_pred <- predict(lmc1_2, pd)
+
+# Create an interactive 3d scatter plot
+plot_ly(data = pd
+        , x = ~adSpendFacebook, y = ~adSpendInstagram, z = ~sales_pred
+        , color = ~store
+        , size = .5
+        , type = 'scatter3d'
+        , mode = 'markers'
+)
+```
+
+__Observations__  
+
+* If you orient the plot so that adSpendFacebook is in front, you can see that as you increase the amount spent on Facebook ads, the sales increases, as well. 
+* If you orient the plot so that adSpendInstagram is in front, you can see that there is no relationship with sales. The observations fall everywhere.
+
+
+## Campaign 2 (Forward Selection)  
+
+Repeat this process with campaign 2, but using forward selection this time.
+
+### Calculate Using EDA
+
+Let's first create a scatter plot between adspend and sales for campaign 2.
+```{r}
+# Create a dataset only for the se campaign data
+c2 <- df %>% filter(campaign == 'C2')
+
+# Reshape the data from wide to long and then plot it
+c2 %>%
+  pivot_longer(cols = c(adSpendFacebook, adSpendInstagram)
+               , names_to = 'Platform', values_to = 'Spend') %>%
+  ggplot(aes(x = Spend, y = sales, color = Platform)) +
+  geom_point()
+```
+
+It's hard to tell if either variable has a strong relationship with sales.
+
+### Calculate Using Regression
+
+I will use forward selection.
+
+#### Model 1
+
+```{r}
+lmc2_1 <- lm('sales ~ adSpendFacebook', data = c2)
+summary(lmc2_1)
+```
+
+**Observations**  
+* The coefficient on adSpendFacebook is positive. I'll keep that variable, and add in another.
+
+#### Model 2
+```{r}
+lmc2_2 <- lm('sales ~ adSpendFacebook + adSpendInstagram', data = c2)
+summary(lmc2_2)
+```
+
+__Observations__  
+* Both of the coefficients on adSpendFacebook and adSpendInstagram are significant. I'll keep those and add in store.  
+
+#### Model 3
+
+```{r}
+lmc2_3 <- lm('sales ~ adSpendFacebook + adSpendInstagram + store', data = c2)
+summary(lmc2_3)
+```
+
+__Observations__  
+
+* The adjusted R-squared is really high. This model would be good for making predictions.
+* Sales increase by about $5.24 for every dollar spent on advertisements on Facebook.
+* Sales increase by about $14.02 for every dollar spend on advertisements on Instagram
+* The store variable is very significant. Each store has a different intercept, except for store D. We will leave the store variable in the model.
+
+
+### Predictions  
+
+Let's make predictions with the lmc2_3 model using the prediction data, and then visualize them in a 3d scatter plot using the plotly package.
+```{r}
+# Create a new column of predicted sales using the lmc2_3 model
+pd$sales_pred_lmc2_3 <- predict(lmc2_3, pd)
+
+# Create an interactive 3d scatter plot
+plot_ly(data = pd
+        , x = ~adSpendFacebook, y = ~adSpendInstagram, z = ~sales_pred_lmc2_3
+        , color = ~store
+        , size = .5
+        , type = 'scatter3d'
+        , mode = 'markers'
+)
+```
+
+__Observations__  
+
+* It's easy to see that as you increase the amount spent on Instagram ads, the sales increase. Thus, you should allocate all advertising dollars to Instagram.  
+* The intercept for stores B, C, and E are much different than for store A.
+
+
+## Campaign 3  
+
+Repeat this process with campaign 3. Use either backward elimination or forward selection.
+
+### Calculate with EDA
+
+
+### Calculate with Regression
+
+
+
+#### Model 1
+
+
+### Predictions  
+
+
+
