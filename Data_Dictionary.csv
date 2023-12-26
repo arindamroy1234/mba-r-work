@@ -1,0 +1,14 @@
+﻿Column Name,Description 
+Date,Date of Transaction
+OperationType,Whether Sales or Return
+CashierName,Name of the cashier
+LineItem,The food item sold
+Department,The department which the lineitem belongs to
+Category,Broader class than department. Each department belongs to one of the categories
+RegisterName,Name of the register in which transaction is recorded
+StoreNumber,Store ID
+TransactionNumber,Transaction ID
+CustomerCode,Customer ID
+Price,Price of the Lineitem sold
+Quantity,Number of units of the Lineitem sold
+TotalDue,Product of Price per unit and Quantity sold

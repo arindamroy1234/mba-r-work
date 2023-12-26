@@ -1,0 +1,65 @@
+---
+title: "HW2"
+author: "John Doe"
+date: "4/26/2022"
+output:
+  html_document: default
+---
+
+## Task 1  
+
+Read in the ities.csv datafile as a dataframe object, __df__. 
+
+```{r}
+
+```
+
+_No descriptive answer is needed here._
+
+## Task 2  
+
+__(2 points) Display the count of rows and columns in the dataframe using an appropriate R function. Below the output, identify the count of rows and the count of columns.__  
+
+```{r}
+
+```
+
+This dataframe has x rows and y columns.
+
+## Task 3  
+
+__(3 points) Use the appropriate R function to display the structure (i.e., number of rows, columns, column names, column data type, some values from each column) of the dataframe, df. Below the output, briefly summarize two main points about the dataframe structure.__
+
+```{r}
+
+```
+
+## Task 4  
+
+__(6 points) True or False: Every transaction is summarized in one row of the dataframe. Display at least one calculation in the code chunk below. Below the calculation(s), clearly indicate whether the statement is true or false and explain how the output of your calculation(s) supports your conclusion.__
+
+```{r}
+
+
+```
+
+## Task 5  
+
+__(3 points) Display the summaries of the Price, Quantity and TotalDue columns. Below the output, provide a brief interpretation of the output for each column.__
+
+```{r}
+
+
+```
+ 
+## Task 6  
+
+__(6 points) Display the boxplots of the log values for the Price, Quantity and TotalDue columns. Below the output, provide a brief description of three insights that you see in the boxplots. As part of your description, indicate how the output from task 5 relates to the boxplots in this task.__
+
+```{r}
+
+```
+
+
+
+
