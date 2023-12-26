@@ -1,0 +1,101 @@
+---
+title: "HW2"
+author: "Arindam Roy"
+date: "8/20/2023"
+output:
+  html_document: default
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+#load the library for validation
+#library(dplyr)
+```
+
+
+## Task 1 
+
+Read in the ities.csv datafile as a dataframe object, __df__. 
+
+```{r}
+# Read in data
+df <- read.csv('ities.csv') 
+```
+
+_No descriptive answer is needed here._
+
+## Task 2  
+
+__(2 points) Display the count of rows and columns in the dataframe using an appropriate R function. Below the output, identify the count of rows and the count of columns.__  
+
+```{r}
+#counting rows in the dataset
+count_rows <- nrow(df)
+#counting columns in the dataset
+count_cols <- ncol(df)
+
+count_rows
+count_cols
+```
+
+This dataframe has 438151 rows and 13 columns.
+
+## Task 3  
+
+__(3 points) Use the appropriate R function to display the structure (i.e., number of rows, columns, column names, column data type, some values from each column) of the dataframe, df. Below the output, briefly summarize two main points about the dataframe structure.__
+
+```{r}
+#displaying the structure of the dataset
+str(df)
+```
+This dataframe has 13 columns and 438151 records of sale/return data of a grocery store chain. Each lineitem, unit price, quanity and total amount are shown as a transaction by a customer on a particular date.
+
+## Task 4  
+
+__(6 points) True or False: Every transaction is summarized in one row of the dataframe. Display at least one calculation in the code chunk below. Below the calculation(s), clearly indicate whether the statement is true or false and explain how the output of your calculation(s) supports your conclusion.__
+
+```{r}
+#counting total rows in the dataset
+nrow(df)
+#counting unique rows in the dataset based on transaction number column
+length(unique(df$TransactionNumber))
+```
+The number of total transactions in this data set is 438151 which is derived when I executed the code chunk `nrow(df)`. However, the unique transaction count is 161058 when I execute the code chunk `length(unique(df$TransactionNumber))`. It shows that every transaction summarized in one row of the dataframe is FALSE. 
+
+You can validate the assertion if you run the code chunk `df_TransactionNumber <- df %>% group_by(TransactionNumber) %>% summarize(UnitPrice = mean(Price),TransactionsInAllStore = sum(Quantity), TotalRevenue = sum(TotalDue)) %>% ungroup()`.
+
+Then, display the 6 rows with `head(df_TransactionNumber)`.
+
+## Task 5  
+
+__(3 points) Display the summaries of the Price, Quantity and TotalDue columns. Below the output, provide a brief interpretation of the output for each column.__
+
+```{r}
+#displaying the summary of Price, Quantity and TotalDue columns in the dataset
+summary(df[,c("Price","Quantity","TotalDue")])
+```
+ 
+The average price of a sale was 14.36 and very near to the 3rd quartile. The minimum price denoted a RETURN of $5740.51. Maximum transaction amount is 21449.97. 
+
+The average quantity bought was 1.177 (~ 1) per transaction, mostly people bought one item per transaction. 
+
+The average total sale was 15.26 and maximum sale in a transaction was 21449.97.
+
+The prices of 12 lineitems are given as NAs in the dataset.
+
+## Task 6  
+
+__(6 points) Display the boxplots of the log values for the Price, Quantity and TotalDue columns. Below the output, provide a brief description of three insights that you see in the boxplots. As part of your description, indicate how the output from task 5 relates to the boxplots in this task.__
+
+```{r}
+#diplaying the boxplot graph of Price, Quantity and TotalDue columns with log10 values in the dataset
+boxplot(df[,c("Price","Quantity","TotalDue")], log10 = "y", outline = FALSE)
+```
+
+
+As shown in the in Task#5, the median price was 11.29 for a line item in the transaction. The interquartile range was between 4.5 and 14.68 in Price column. The quantity bought per transaction was mostly 1 and that is the reason we can see only a line in Box and whisker plot for Quanity column. The Total Due was almost same boxplot as price because people bought mostly single item per transaction.
+
+
+
